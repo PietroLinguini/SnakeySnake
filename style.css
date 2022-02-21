@@ -1,6 +1,7 @@
 .main {
   display: flex;
   gap: 10px;
+  justify-content: center;
 }
 
 .grid {
@@ -18,12 +19,13 @@
   height: 1fr;
 }
 
-.snake-head {
+.snake {
   background-color: pink;
   border: 1px solid black;
 }
 
-.snake-body {
+.test {
+  background-color: red;
 }
 
 .food {
