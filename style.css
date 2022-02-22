@@ -21,7 +21,7 @@
 
 .snake {
   background-color: pink;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 .test {
@@ -30,5 +30,5 @@
 
 .food {
   background-color: purple;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }

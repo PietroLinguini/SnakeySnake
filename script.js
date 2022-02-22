@@ -12,40 +12,24 @@ let moveInterval;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Snake manipulation
-class SnakeNode {
-  constructor(box, next) {
-    this.box = box;
-    this.next = next;
-  }
-}
-let snake = {
-  head: null,
-};
-function getLastSnakeNode() {
-  let curr = snake.head;
-  while (curr.next) {
-    curr = curr.next;
-  }
-  return curr;
-}
+
+let snake = [];
+
 function shiftBody() {
-  if (!snake.head.next) {
-    snake.head.box.classList.remove("snake");
+  if (snake.length == 1) {
+    snake[0].classList.remove("snake-head");
+    snake[0].classList.remove("snake");
     return;
   }
 
-  let curr = snake.head.next;
-  let prev = snake.head;
-  while (curr.next) {
-    if (!curr.next) {
-      curr.box.classList.remove("snake");
-    }
-    curr.box = prev.box;
-    prev = curr;
-    curr = curr.next;
+  snake[snake.length - 1].classList.remove("snake");
+  for (let i = snake.length - 1; i > 0; i--) {
+    snake[i] = snake[i - 1];
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+// Math
 const randomInt = (min, max) =>
   Math.trunc(Math.random() * (max - min + 1) + min);
 
@@ -85,11 +69,13 @@ function setUpGame() {
 setUpGame();
 
 function spawnSnake() {
+  snake = [];
+
   const head = randomBox();
   head.classList.add("snake");
   head.classList.add("snake-head");
-  snake.head = new SnakeNode(head, null);
-  console.log(snake.head);
+  snake.push(head);
+  console.log(snake[0]);
 }
 
 function beginGame(e) {
@@ -114,11 +100,11 @@ function beginGame(e) {
     nextDirection = e.key;
     doMove(nextDirection);
     clearInterval(moveInterval);
-    moveInterval = setInterval(doMove, 50, nextDirection);
+    // moveInterval = setInterval(doMove, 50, nextDirection);
   });
 
   doMove(nextDirection);
-  moveInterval = setInterval(doMove, 50, nextDirection);
+  // moveInterval = setInterval(doMove, 50, nextDirection);
 }
 
 function doMove(direction) {
@@ -205,15 +191,14 @@ function move(direction) {
   loc[shifted] += dir;
   shiftBody();
   const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
-  snake.head.box = newHead;
+  snake[0] = newHead;
   newHead.classList.add("snake-head");
   newHead.classList.add("snake");
-  snakeHead.classList.remove("snake-head");
 
   if (newHead.classList.contains("food")) {
     newHead.classList.remove("food");
-    snakeHead.classList.add("snake-body");
     snakeHead.classList.add("snake");
+    snake.push(snakeHead);
 
     spawnFood();
   }
