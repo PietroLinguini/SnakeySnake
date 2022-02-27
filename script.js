@@ -15,18 +15,30 @@ let moveInterval;
 
 let snake = [];
 
-function shiftBody() {
-  if (snake.length == 1) {
-    snake[0].classList.remove("snake-head");
-    snake[0].classList.remove("snake");
-    return;
-  }
+function setSnakeBox(row, column) {
+  document.getElementById(`box__${row}-${column}`).classList.add("snake");
+}
 
-  snake[snake.length - 1].classList.remove("snake");
+function shiftBody() {
+  const [lastRow, lastColumn] = snake.at(-1);
+  document
+    .getElementById(`box__${lastRow}-${lastColumn}`)
+    .classList.remove("snake");
+
   for (let i = snake.length - 1; i > 0; i--) {
     snake[i] = snake[i - 1];
+    setSnakeBox(snake[i][0], snake[i][1]);
   }
 }
+
+const getRowAndColumn = box => {
+  if (box.classList.contains("box"))
+    return box
+      .getAttribute("id")
+      .match(/\d+/g)
+      .map(s => Number(s));
+  else return [-1, -1];
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Math
@@ -69,13 +81,10 @@ function setUpGame() {
 setUpGame();
 
 function spawnSnake() {
-  snake = [];
-
   const head = randomBox();
   head.classList.add("snake");
   head.classList.add("snake-head");
-  snake.push(head);
-  console.log(snake[0]);
+  snake.push(getRowAndColumn(head));
 }
 
 function beginGame(e) {
@@ -100,11 +109,11 @@ function beginGame(e) {
     nextDirection = e.key;
     doMove(nextDirection);
     clearInterval(moveInterval);
-    // moveInterval = setInterval(doMove, 50, nextDirection);
+    moveInterval = setInterval(doMove, 50, nextDirection);
   });
 
   doMove(nextDirection);
-  // moveInterval = setInterval(doMove, 50, nextDirection);
+  moveInterval = setInterval(doMove, 50, nextDirection);
 }
 
 function doMove(direction) {
@@ -130,11 +139,7 @@ function doMove(direction) {
 
 function move(direction) {
   const snakeHead = document.querySelector(".snake-head");
-  const [row, column] = (loc = snakeHead
-    .getAttribute("id")
-    .slice(5)
-    .split("-")
-    .map(s => Number(s)));
+  const [row, column] = (loc = getRowAndColumn(snakeHead));
 
   let shifted = (dir = 0);
   switch (direction) {
@@ -188,20 +193,50 @@ function move(direction) {
   //   spawnFood();
   // }
 
+  // loc[shifted] += dir;
+  // shiftBody();
+  // snakeHead.classList.remove("snake-head");
+  // const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
+  // snake[0] = newHead;
+  // newHead.classList.add("snake-head");
+  // newHead.classList.add("snake");
+
+  // if (newHead.classList.contains("food")) {
+  //   newHead.classList.remove("food");
+  //   snake.push(snakeHead);
+
+  //   spawnFood();
+  // }
+
+  // loc[shifted] += dir;
+  // shiftBody();
+  // snakeHead.classList.remove("snake-head");
+  // const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
+  // newHead.classList.add("snake-head");
+  // snake[0] = getRowAndColumn(newHead);
+
+  // if (newHead.classList.contains("food")) {
+  //   newHead.classList.remove("food");
+  //   snake.push(getRowAndColumn(snakeHead));
+
+  //   spawnFood();
+  // }
+
   loc[shifted] += dir;
-  shiftBody();
   const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
-  snake[0] = newHead;
-  newHead.classList.add("snake-head");
-  newHead.classList.add("snake");
 
   if (newHead.classList.contains("food")) {
     newHead.classList.remove("food");
     snakeHead.classList.add("snake");
-    snake.push(snakeHead);
-
+    snake.splice(0, 0, getRowAndColumn(newHead));
     spawnFood();
+  } else {
+    shiftBody();
+    snake[0] = getRowAndColumn(newHead);
   }
+
+  snakeHead.classList.remove("snake-head");
+  newHead.classList.add("snake-head");
 }
 
 function endGame() {
