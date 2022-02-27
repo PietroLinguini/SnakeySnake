@@ -57,7 +57,6 @@ const randomBox = () => {
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Game logic
-
 for (let i = 1; i <= ROW_COUNT; i++) {
   for (let k = 1; k <= COLUMN_COUNT; k++) {
     const box = document.createElement("div");
@@ -67,11 +66,6 @@ for (let i = 1; i <= ROW_COUNT; i++) {
     grid.append(box);
   }
 }
-
-// document
-//   .querySelector(".grid")
-//   .querySelectorAll("*")
-//   .forEach(el => el.classList.remove("snake-head"));
 
 function setUpGame() {
   spawnSnake();
@@ -180,47 +174,6 @@ function move(direction) {
       }
       break;
   }
-
-  // snakeHead.classList.remove("snake-head");
-  // loc[shifted] += dir;
-  // const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
-  // newHead.classList.add("snake-head");
-  // snake.head = newHead;
-
-  // if (newHead.classList.contains("food")) {
-  //   newHead.classList.remove("food");
-  //   expandSnake();
-  //   spawnFood();
-  // }
-
-  // loc[shifted] += dir;
-  // shiftBody();
-  // snakeHead.classList.remove("snake-head");
-  // const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
-  // snake[0] = newHead;
-  // newHead.classList.add("snake-head");
-  // newHead.classList.add("snake");
-
-  // if (newHead.classList.contains("food")) {
-  //   newHead.classList.remove("food");
-  //   snake.push(snakeHead);
-
-  //   spawnFood();
-  // }
-
-  // loc[shifted] += dir;
-  // shiftBody();
-  // snakeHead.classList.remove("snake-head");
-  // const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
-  // newHead.classList.add("snake-head");
-  // snake[0] = getRowAndColumn(newHead);
-
-  // if (newHead.classList.contains("food")) {
-  //   newHead.classList.remove("food");
-  //   snake.push(getRowAndColumn(snakeHead));
-
-  //   spawnFood();
-  // }
 
   loc[shifted] += dir;
   const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
