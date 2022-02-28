@@ -1,4 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////
+// Selectors and Constants
 const grid = document.querySelector(".grid");
 const playButton = document.querySelector(".btn__play");
 const ROW_COUNT = 20;
@@ -12,7 +13,6 @@ let moveInterval;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Snake manipulation
-
 let snake = [];
 
 function setSnakeBox(row, column) {
@@ -39,6 +39,13 @@ const getRowAndColumn = box => {
       .map(s => Number(s));
   else return [-1, -1];
 };
+
+function turn(e) {
+  nextDirection = e.key;
+  doMove(nextDirection);
+  clearInterval(moveInterval);
+  moveInterval = setInterval(doMove, 50, nextDirection);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Math
@@ -67,12 +74,13 @@ for (let i = 1; i <= ROW_COUNT; i++) {
   }
 }
 
-function setUpGame() {
+function initGame() {
+  snake = [];
   spawnSnake();
-  document.documentElement.addEventListener("keydown", beginGame);
+  document.addEventListener("keydown", beginGame);
   spawnFood();
 }
-setUpGame();
+initGame();
 
 function spawnSnake() {
   const head = randomBox();
@@ -94,17 +102,12 @@ function beginGame(e) {
   )
     return;
 
+  document.removeEventListener("keydown", beginGame);
   playing = true;
 
   let nextDirection = e.key;
-  document.documentElement.removeEventListener("keydown", beginGame);
 
-  document.documentElement.addEventListener("keydown", e => {
-    nextDirection = e.key;
-    doMove(nextDirection);
-    clearInterval(moveInterval);
-    moveInterval = setInterval(doMove, 50, nextDirection);
-  });
+  document.addEventListener("keydown", turn);
 
   doMove(nextDirection);
   moveInterval = setInterval(doMove, 50, nextDirection);
@@ -179,6 +182,7 @@ function move(direction) {
   const newHead = document.getElementById(`box__${loc[0]}-${loc[1]}`);
 
   if (newHead.classList.contains("food")) {
+    points++;
     newHead.classList.remove("food");
     snakeHead.classList.add("snake");
     snake.splice(0, 0, getRowAndColumn(newHead));
@@ -193,14 +197,25 @@ function move(direction) {
 }
 
 function endGame() {
+  playing = false;
   resetGame();
 }
 
 function resetGame() {
   points = 0;
-  clearInterval(moveInterval);
 
-  snake.head.box.classList.remove("snake-head");
+  clearInterval(moveInterval);
+  moveInterval = null;
+  document.removeEventListener("keydown", turn);
+
+  document
+    .getElementById(`box__${snake[0][0]}-${snake[0][1]}`)
+    .classList.remove("snake-head");
+
+  snake.forEach(([row, col]) => {
+    document.getElementById(`box__${row}-${col}`).classList.remove("snake");
+  });
+
   document
     .querySelector(".grid")
     .querySelectorAll("*")
@@ -208,10 +223,9 @@ function resetGame() {
       el.classList.remove("food");
     });
 
-  setUpGame();
+  initGame();
 }
 
 function spawnFood() {
   randomBox().classList.add("food");
-  points++;
 }
